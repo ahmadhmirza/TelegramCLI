@@ -13,13 +13,20 @@ api_id, api_hash = utils.get_api_info()
 client = sh.create_session(api_id, api_hash)
 
 
+def write_to_file(file_name, msg):
+    with open(file_name, "a") as myfile:
+        myfile.write(msg)
+
+
 @client.on(events.NewMessage)
 async def new_message_event_handler(event):
     try:
         user_details = await client.get_entity(event.message.peer_id.user_id)
         print(f"New message from {user_details.first_name}: {event.message.message}")
     except Exception as e:
-        logger.error("Error getting user info", e, event, exc_info=1)
+        logger.error("Error getting user info")
+        logger.info(event)
+        print(event.message.message)
 
 
 @client.on(events.UserUpdate)
@@ -29,6 +36,8 @@ async def user_update_event_handler(event):
         try:
             user_details = await client.get_entity(event.user_id)
             print(f" {user_details.first_name}, came online at : {datetime.now()}")
+            msg = "{fname}, came online at :  {time}\n".format(fname=user_details.first_name, time=datetime.now())
+            write_to_file("status_journal.log", msg)
         except Exception as e:
             logger.error(e)
             print(event)
@@ -36,6 +45,8 @@ async def user_update_event_handler(event):
         try:
             user_details = await client.get_entity(event.user_id)
             print(f" {user_details.first_name}, went offline at: {datetime.now()}")
+            msg = "{fname}, went offline at :  {time}\n".format(fname=user_details.first_name, time=datetime.now())
+            write_to_file("status_journal.log", msg)
         except Exception as e:
             logger.error(e)
     else:
