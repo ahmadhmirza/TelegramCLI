@@ -1,12 +1,14 @@
+import types
 from datetime import datetime
 from telethon import events
 import Session_Helper as sh
 import Telegram_Client_Helper as tClientHelper
-import Yaml_Reader as yr
+from telethon import types
+import utils
 
-
+logger = utils.get_logger("main.py", "INFO")
 # get the info for creating the client
-api_id, api_hash = yr.get_api_info()
+api_id, api_hash = utils.get_api_info()
 # create the client
 client = sh.create_session(api_id, api_hash)
 
@@ -16,24 +18,28 @@ async def new_message_event_handler(event):
     try:
         user_details = await client.get_entity(event.message.peer_id.user_id)
         print(f"New message from {user_details.first_name}: {event.message.message}")
-    except:
-        print("Error getting the user")
-        print(event)
+    except Exception as e:
+        logger.error("Error getting user info", e, event, exc_info=1)
 
 
 @client.on(events.UserUpdate)
 async def user_update_event_handler(event):
-    print(event)
-    print(f"User ID: {event.user_id}, Action: {event.status}")
-    print ("---")
+    logger.debug(event)
     if event.online:
         try:
-            user_id = event.user_id
-            user_details = await client.get_entity(user_id)
-            print(f" {user_details.first_name}, came online at: {datetime.now()}")
-        except:
-            print (event)
-    print("------------------------------------------------------------------------")
+            user_details = await client.get_entity(event.user_id)
+            print(f" {user_details.first_name}, came online at : {datetime.now()}")
+        except Exception as e:
+            logger.error(e)
+            print(event)
+    elif isinstance(event.status, types.UserStatusOffline):
+        try:
+            user_details = await client.get_entity(event.user_id)
+            print(f" {user_details.first_name}, went offline at: {datetime.now()}")
+        except Exception as e:
+            logger.error(e)
+    else:
+        "UserUpdate event occurred, see log for more info."
 
 
 class Main:
@@ -42,13 +48,13 @@ class Main:
 
     def run_routine(self):
         with self.client:
-            #self.program_routine()
+            # self.program_routine()
             self.client.run_until_disconnected()
 
     def program_routine(self):
         # send message
-        #client.loop.run_until_complete(send_message(client, "me"))
-        #client.loop.run_until_complete(tClientHelper.send_message(client, "Tahmed28"))
+        # client.loop.run_until_complete(send_message(client, "me"))
+        # client.loop.run_until_complete(tClientHelper.send_message(client, "Tahmed28"))
         # get messages from a particular chat
         # tClientHelper.get_messages(self.client, kate["phone_no"])
 
@@ -62,8 +68,8 @@ class Main:
 
 # Main function
 if __name__ == '__main__':
-    print("---Starting session---")
+    logger.info("---Starting session---")
     telegramClient = Main(client)
-    print("---Session running----")
+    logger.info("---Session running----")
     telegramClient.run_routine()
-    print("---Session ended------")
+    logger.info("---Session ended------")
