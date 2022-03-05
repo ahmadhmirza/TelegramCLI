@@ -1,5 +1,5 @@
 # Config files
-config.yaml
+configuration.yaml
 *.session*
 *.idea
 
