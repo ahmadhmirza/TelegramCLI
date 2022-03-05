@@ -1,0 +1,11 @@
+---
+# api info
+api_id: 11223344
+api_hash: 1234abcde567fghi8jkl9a12b1234c1a
+
+# list of test users
+test_users:
+- john:
+    id: "jDoe"
+    first_name: "John"
+...
