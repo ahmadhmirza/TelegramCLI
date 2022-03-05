@@ -1,2 +1,2 @@
-# TelegramCLI
-Python interface to telegram using the Telethon library.
+# TelegramClientCli
+Python based client for interacting with the messaging app Telegram using Telethon library.

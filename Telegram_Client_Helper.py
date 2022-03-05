@@ -1,8 +1,3 @@
-
-"""
-File to hold helper methods interfacing with the TelegramClient object.
-"""
-
 async def send_message(t_client, recipient):
     await t_client.send_message(recipient, "Test Message")
     print("message sent successfully.")

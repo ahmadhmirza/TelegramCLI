@@ -3,11 +3,7 @@ from telethon import events
 import Session_Helper as sh
 import Telegram_Client_Helper as tClientHelper
 import Yaml_Reader as yr
-import logging
 
-# create logger
-logger = logging.getLogger('simple_example')
-logger.setLevel(logging.DEBUG)
 
 # get the info for creating the client
 api_id, api_hash = yr.get_api_info()
@@ -27,14 +23,15 @@ async def new_message_event_handler(event):
 
 @client.on(events.UserUpdate)
 async def user_update_event_handler(event):
-    logger.debug(event)
+    print(event)
+    print(f"User ID: {event.user_id}, Action: {event.status}")
+    print ("---")
     if event.online:
         try:
             user_id = event.user_id
             user_details = await client.get_entity(user_id)
             print(f" {user_details.first_name}, came online at: {datetime.now()}")
-        except Exception as e:
-            logger.error(e)
+        except:
             print (event)
     print("------------------------------------------------------------------------")
 

@@ -1,9 +1,6 @@
 from datetime import datetime
 from telethon import TelegramClient
 
-"""
-Holds methods to help with client/session lifecycle operations
-"""
 
 async def logout(client):
     await client.log_out()
